@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="application/x-java-jnlp-file"%>
 <%
 //should also look at the client project jnlp/jnlp/template-jsp.vm
-//String codebase = "http://localhost:8181/multiwebstart-base-web/";
+//String codebase = "http://localhost:8181/multiwebstart2-base-web/";
 String url = request.getRequestURL().toString();
 String servletPath = request.getServletPath();
 String codebase = url.substring(0,url.indexOf(servletPath));
@@ -18,7 +18,7 @@ java.util.Set<java.lang.String> resourcePaths = getServletContext().getResourceP
 		<vendor>Weboctave</vendor>
 		<description>Simple Swing Webstart Application </description>
 		<description kind="short">Simple Swing Webstart Application</description>
-		<shortcut online="true"><desktop/><menu submenu="Weboctave"/></shortcut>
+		<shortcut online="true"><desktop/><menu submenu="Western Asset"/></shortcut>
 	</information>
 	<security>
 		<all-permissions/>

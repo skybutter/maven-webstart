@@ -1,0 +1,139 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>com.weboctave</groupId>
+    <artifactId>multiwebstart-base</artifactId>
+    <version>1.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>multiwebstart-base-web</artifactId>
+  <name>multiwebstart-base-war</name>
+  <packaging>war</packaging>
+  <description>SwingWebstart application WAR</description>
+  <dependencies>
+    <dependency>
+      <groupId>com.weboctave</groupId>
+      <artifactId>multiwebstart-base-client</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+	<dependency>
+	  <groupId>javax.servlet</groupId>
+	  <artifactId>javax.servlet-api</artifactId>
+	  <version>3.1.0</version>
+	  <scope>provided</scope>
+	</dependency>
+	<!-- Not using JnlpDownloadServlet
+    <dependency>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>webstart-jnlp-servlet</artifactId>
+      <version>1.0-beta-6</version>
+      <scope>runtime</scope>
+    </dependency>
+     -->
+  </dependencies>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>src/main/resources</directory>
+              <targetPath>WEB-INF/classes</targetPath>
+              <filtering>true</filtering>
+            </resource>
+            <!-- Manually copy the JNLP resource into the Webapp.  
+            	This is required when using the jnlp-inline goal, and using the default jnlp workingDirectory.
+            	Alternatively, another way is to specify the workingDirectory in the webstart plugin to the web build directory,
+            	  then no need to copy.  But here we chose to copy the resources. -->
+            <resource>
+              <directory>${project.build.directory}/jnlp</directory>
+              <includes>
+                <include>**</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>webstart-maven-plugin</artifactId>
+        <version>1.0-beta-6</version>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>	<!-- or package  -->
+            <goals>
+              <goal>jnlp-inline</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <configuration>
+          <filenameMapping>simple</filenameMapping>
+          <!-- outputDirectory has no effect.  Specify here just to illustrate. -->
+          <outputDirectory>whatever</outputDirectory>
+          <!-- By specifying the working directory as the web project build directory,
+          		the generated the jnlp file and resources are there for the WAR plugin to package.
+          		Thus, no need to copy files from jnlp directory to webapp -->
+          <!-- 
+          <workDirectory>${project.build.directory}/${project.artifactId}</workDirectory>
+		  -->
+          <!--
+          Set to true to exclude all transitive dependencies. Default is false.
+          -->
+          <excludeTransitive>false</excludeTransitive>
+          
+          <!-- The path where the libraries are stored within the jnlp structure. not required. by default the libraries are within the working directory -->
+          <libPath>webstart</libPath>
+          <!-- outputJarVersions=false means specify the version number as part of the file name.
+          		Must be false, if you don't use the JnlpDownloadServlet -->
+          <outputJarVersions>false</outputJarVersions>
+          <dependencies>
+			<!-- Note that only groupId and artifactId must be specified here. because of a limitation of the Include/ExcludesArtifactFilter -->
+			<!-- 
+            <includes>
+              <include>com.weboctave:webstart2-client</include>
+            </includes>
+             -->
+            <!-- excludes>
+              <exclude></exclude>
+            <excludes-->
+          </dependencies>
+          <!--resourcesDirectory>${project.basedir}/src/main/jnlp/resources</resourcesDirectory--> <!-- default value -->
+          <!-- webstart maven plugin jnlp-inline goal can not generate multiple jnlp files.
+          		The later one is used.  Specified here and commented out for illustration only.
+          <jnlp>
+            <inputTemplateResourcePath>${project.basedir}/src/main</inputTemplateResourcePath>
+            <inputTemplate>jnlp/template.vm</inputTemplate>
+          	<outputFile>webstart/launch.jnlp</outputFile>
+          	<mainClass>com.weboctave.swingwebstart.client.HelloWorldSwing</mainClass>
+          </jnlp>
+           -->
+          <jnlp>
+            <inputTemplateResourcePath>${project.basedir}/src/main</inputTemplateResourcePath>
+            <inputTemplate>jnlp/template-jsp.vm</inputTemplate>
+          	<outputFile>webstart/launch.jsp</outputFile>
+          	<mainClass>com.weboctave.multiwebstart.base.client.HelloWorldSwing</mainClass>
+          </jnlp>
+          <sign>
+            <keystore>${basedir}/myKeystore</keystore>
+			<alias>myself</alias>
+			<storepass>testing</storepass>
+			<keypass>testing</keypass>
+			<verify>true</verify>
+          </sign>
+          <unsign>true</unsign> <!-- unsign already signed packages and sign them with own key -->
+          <verifyjar>false</verifyjar>
+          <!-- updateManifestEntries is required for Java Webstart 1.7+ -->
+          <updateManifestEntries>
+             <Permissions>all-permissions</Permissions>
+             <Codebase>*</Codebase>
+          </updateManifestEntries>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

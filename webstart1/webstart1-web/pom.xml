@@ -1,0 +1,102 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>com.weboctave</groupId>
+    <artifactId>webstart1</artifactId>
+    <version>1.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>webstart1-web</artifactId>
+  <name>webstart1-war</name>
+  <packaging>war</packaging>
+  <description>SwingWebstart application war</description>
+  <dependencies>
+    <dependency>
+      <groupId>com.weboctave</groupId>
+      <artifactId>webstart1-client</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+	<dependency>
+	  <groupId>javax.servlet</groupId>
+	  <artifactId>javax.servlet-api</artifactId>
+	  <version>3.1.0</version>
+	  <scope>provided</scope>
+	</dependency>
+    <dependency>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>webstart-jnlp-servlet</artifactId>
+      <version>1.0-beta-6</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>src/main/resources</directory>
+              <targetPath>WEB-INF/classes</targetPath>
+              <filtering>true</filtering>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>webstart-maven-plugin</artifactId>
+        <version>1.0-beta-6</version>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>jnlp-download-servlet</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <configuration>
+          <outputDirectoryName>webstart</outputDirectoryName>
+
+          <!--
+          Set to true to exclude all transitive dependencies. Default is false.
+          -->
+          <excludeTransitive>false</excludeTransitive>
+
+          <jnlpFiles>
+            <jnlpFile>
+              <inputTemplateResourcePath>${project.basedir}/src/main</inputTemplateResourcePath>
+              <inputTemplate>jnlp/template.vm</inputTemplate>
+              <outputFilename>launch.jnlp</outputFilename> <!-- when there's only one jnlpFile, can be optional and defaults to launch.jnlp -->
+              <jarResources>
+                <jarResource>
+                  <groupId>com.weboctave</groupId>
+                  <artifactId>webstart1-client</artifactId>
+                  <version>${project.version}</version>
+                  <mainClass>com.weboctave.swingwebstart.client.HelloWorldSwing</mainClass>
+                </jarResource>
+              </jarResources>
+            </jnlpFile>
+          </jnlpFiles>
+          <sign>
+            <keystore>${basedir}/myKeystore</keystore>
+			<alias>myself</alias>
+			<storepass>testing</storepass>
+			<keypass>testing</keypass>
+			<verify>true</verify>
+          </sign>
+          <unsign>true</unsign> <!-- unsign already signed packages and sign them with own key -->
+          <verifyjar>false</verifyjar>
+          <updateManifestEntries>
+             <Permissions>all-permissions</Permissions>
+             <Codebase>*</Codebase>
+           </updateManifestEntries>          
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

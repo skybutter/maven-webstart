@@ -1,0 +1,1 @@
+This project works with the multiwebstart2-base project.

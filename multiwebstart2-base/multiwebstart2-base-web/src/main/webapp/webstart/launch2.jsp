@@ -18,7 +18,7 @@ java.util.Set<java.lang.String> resourcePaths = getServletContext().getResourceP
 		<vendor>Weboctave</vendor>
 		<description>Simple Swing Webstart Application </description>
 		<description kind="short">Simple Swing Webstart Application</description>
-		<shortcut online="true"><desktop/><menu submenu="Western Asset"/></shortcut>
+		<shortcut online="true"><desktop/><menu submenu="Weboctave"/></shortcut>
 	</information>
 	<security>
 		<all-permissions/>

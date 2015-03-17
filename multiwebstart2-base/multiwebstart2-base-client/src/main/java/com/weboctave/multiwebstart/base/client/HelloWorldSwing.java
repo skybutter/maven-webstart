@@ -15,7 +15,7 @@ public class HelloWorldSwing {
 	}
 	
 	private static void createGui() {
-		final JFrame frame = new JFrame("multiwebstart-base");
+		final JFrame frame = new JFrame("multiwebstart2-base");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel jpanel1 = new JPanel();
 		final JLabel label = new JLabel("Hello World");

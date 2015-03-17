@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <%@ page language="java" contentType="application/x-java-jnlp-file"%>
-<%
-// should also look at the web project webstart/launch2.jsp
-// String codebase = "http://localhost:8181/multiwebstart2-base-web/";
-String url = request.getRequestURL().toString();
-String servletPath = request.getServletPath();
-String codebase = url.substring(0,url.indexOf(servletPath));
+<%!
+public static final String mainjar = "multiwebstart2-base-client";
+public static final String childapp = "/multiwebstart2-child-web";
+public static final String jnlpResourcePath = "webstart/";
+public static java.util.Set<java.lang.String> resources = null;
+public static String codeBase = null;
 
-String mainjar = "multiwebstart2-base-client";
-String jnlpResourcePath = "webstart/";
-java.util.Set<java.lang.String> resourcePaths = getServletContext().getResourcePaths("/" + jnlpResourcePath);
-// resourcePaths(/webstart/=[/webstart/commons-lang-2.1.jar, /webstart/launch.jsp, /webstart/multiwebstart2-base-client-1.0.jar]
+public String getCodeBase(HttpServletRequest request) {
+	//should also look at the client project jnlp/template-jsp.vm
+	//String codebase = "http://localhost:8181/multiwebstart2-base-web/";
+	if (codeBase==null || codeBase.isEmpty()) {
+		String url = request.getRequestURL().toString();
+		String servletPath = request.getServletPath();
+		codeBase = url.substring(0,url.indexOf(servletPath));		
+	}
+	return codeBase;
+}
+
+public java.util.Set<java.lang.String> getResourcePaths() {
+	synchronized (this) {
+		if (resources==null || resources.isEmpty()) {
+			// This files shows the list of jar files required
+			// Sample output:
+			// resources(/webstart/=[/webstart/commons-lang-2.1.jar, /webstart/launch.jsp, /webstart/multiwebstart2-child-client-1.0.jar]
+			resources = getServletContext().getResourcePaths("/" + jnlpResourcePath);			
+		}
+	}
+	return resources;
+}
+%>
+<%
+String codebase = getCodeBase(request);
+java.util.Set<java.lang.String> resourcePaths = getResourcePaths();
 %>
 <jnlp spec="6.0+" codebase="<%=codebase %>" >
 	<information>
@@ -32,11 +54,9 @@ java.util.Set<java.lang.String> resourcePaths = getServletContext().getResourceP
 // otherwise, the output from the include would come before the output from this jsp
 out.flush();
 // include jsp from another webapp in the same server
-javax.servlet.ServletContext context = application.getContext("/multiwebstart2-child-web");
-System.out.println("servletContext=" + context);
+javax.servlet.ServletContext context = application.getContext(childapp);
 if (context!=null) {
    javax.servlet.RequestDispatcher rd = context.getRequestDispatcher("/webstart/resourceversion.jsp");
-   System.out.println("RequestDispatcher=" + rd);
    if (rd!=null)
    		rd.include(request, response);
 }

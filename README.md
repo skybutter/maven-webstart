@@ -6,3 +6,4 @@ Different configurations:
 2. Using customized Jsp as jnlp without using JnlpDownloadServlet
 3. Run maven webstart plugin in the swing client pom.xml
 4. Run maven webstart plugin in the webapp pom.xml
+5. Java Swing webstart application work with multiple WAR
